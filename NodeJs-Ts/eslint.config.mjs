@@ -1,48 +1,35 @@
-import typescriptEslint from "@typescript-eslint/eslint-plugin";
-import prettier from "eslint-plugin-prettier";
-import tsParser from "@typescript-eslint/parser";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-import js from "@eslint/js";
-import { FlatCompat } from "@eslint/eslintrc";
+import globals from 'globals'
+import pluginJs from '@eslint/js'
+import tseslint from 'typescript-eslint'
+import eslintPluginPrettier from 'eslint-plugin-prettier'
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
-
-export default [...compat.extends(
-    "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "eslint-config-prettier",
-    "prettier",
-), {
+export default [
+  { files: ['**/*.{js,mjs,cjs,ts}'] },
+  { languageOptions: { globals: globals.node } },
+  pluginJs.configs.recommended,
+  ...tseslint.configs.recommended,
+  {
     plugins: {
-        "@typescript-eslint": typescriptEslint,
-        prettier,
+      prettier: eslintPluginPrettier
     },
-
-    languageOptions: {
-        parser: tsParser,
-    },
-
     rules: {
-        "@typescript-eslint/no-explicit-any": "off",
-        "@typescript-eslint/no-unused-vars": "off",
-
-        "prettier/prettier": ["warn", {
-            arrowParens: "always",
-            semi: false,
-            trailingComma: "none",
-            tabWidth: 2,
-            endOfLine: "auto",
-            useTabs: false,
-            singleQuote: true,
-            printWidth: 120,
-            jsxSingleQuote: true,
-        }],
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
+      'prettier/prettier': [
+        'warn',
+        {
+          arrowParens: 'always',
+          semi: false,
+          trailingComma: 'none',
+          tabWidth: 2,
+          endOfLine: 'auto',
+          useTabs: false,
+          singleQuote: true,
+          printWidth: 120,
+          jsxSingleQuote: true
+        }
+      ]
     },
-}];
+    ignores: ['**/node_modules/', '**/dist/']
+  }
+]
